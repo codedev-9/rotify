@@ -1,4 +1,4 @@
 .vercel
 .env
 .env.local
-src/firebase.js
+public/firebase.js
