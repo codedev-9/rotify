@@ -1,0 +1,20 @@
+const client_id = process.env.SPOTIFY_CLIENT_ID
+let redirect_uri = "https://rotify.xyz/api/callback"
+const scopes = [
+  "user-read-playback-state",
+  "user-read-currently-playing",
+  "user-read-private"
+].join(" ")
+export default function handler(req, res) {
+  if (req.headers.host.startsWith("127.0.0.1")) {
+      redirect_uri = "http://127.0.0.1:3000/api/callback"
+  }
+  const params = new URLSearchParams({
+    client_id,
+    response_type: "code",
+    redirect_uri,
+    scope: scopes
+  })
+
+  res.redirect("https://accounts.spotify.com/authorize?" + params.toString())
+}
