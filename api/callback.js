@@ -14,6 +14,7 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 export default async function handler(req, res) {
   const code = req.query.code
+  console.log(code)
 
   if (!code) {
     return res.status(400).json({ error: "Missing code" })

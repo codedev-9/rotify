@@ -16,11 +16,25 @@ if (!admin.apps.length) {
   });
 }
 const db = admin.firestore();
-export default function handler(req, res) {
+export default async function handler(req, res) {
+  if (req.method === "POST") {
+    // If user is new -> add new datastore doc
+    const is_user_in_database = await db.collection("users").doc(req.body.user_id).get()
+    if (!is_user_in_database.exists) {
+      await db.collection("users").doc(req.body.user_id).set({
+        access_token: "",
+        refresh_token: "",
+        expires_in: 0
+      })
+      return res.status(200).json({ success: true })
+    } else {
+      return res.status(200).json({ success: true, message: "user already exists" })
+    }
+  }
+
   if (req.headers.host.startsWith("127.0.0.1")) {
       redirect_uri = "http://127.0.0.1:3000/api/callback"
   }
-  // if the user isnt new
   const params = new URLSearchParams({
     client_id,
     response_type: "code",
