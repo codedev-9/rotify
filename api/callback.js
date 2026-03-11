@@ -14,7 +14,7 @@ if (!admin.apps.length) {
 }
 const db = admin.firestore();
 export default async function handler(req, res) {
-  const code = req.body.code
+  const code = req.query.code
   if (req.method === "POST") {
     // code check
   if (!code) {

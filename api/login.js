@@ -19,17 +19,19 @@ const db = admin.firestore();
 export default async function handler(req, res) {
   if (req.method === "POST") {
     // If user is new -> add new datastore doc
-    const is_user_in_database = await db.collection("users").doc(req.body.user_id).get()
+    const user_id = req.body.user_id
+    if (!req.body.user_id) {
+      return res.status(400).json({ message: "missing user_id" })
+    }
+    const is_user_in_database = await db.collection("users").doc(user_id).get()
     if (!is_user_in_database.exists) {
-      await db.collection("users").doc(req.body.user_id).set({
+      await db.collection("users").doc(user_id).set({
         access_token: "",
         refresh_token: "",
         code: "",
         expires_in: 0
       })
-      return res.status(200).json({ success: true })
-    } else {
-      return res.status(200).json({ success: true, message: "user already exists" })
+      res.status(200).json({ success: true })
     }
   }
 
@@ -43,5 +45,7 @@ export default async function handler(req, res) {
     scope: scopes
   })
 
-  res.redirect("https://accounts.spotify.com/authorize?" + params.toString())
+  res.json({
+    auth_url: "https://accounts.spotify.com/authorize?" + params.toString()
+  })
 }
