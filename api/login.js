@@ -6,6 +6,7 @@ const scopes = [
   "user-read-private"
 ].join(" ")
 import admin from "firebase-admin";
+import { lessThan } from "firebase/firestore/pipelines";
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -16,17 +17,37 @@ if (!admin.apps.length) {
   });
 }
 const db = admin.firestore();
-export default function handler(req, res) {
+export default async function handler(req, res) {
+  let uuid = req.body.user_id
+  if (req.method === "POST") {
+    // If user is new -> add new datastore doc
+    const user_id = req.body.user_id
+    if (!req.body.user_id) {
+      return res.status(400).json({ message: "missing user_id" })
+    }
+    const is_user_in_database = await db.collection("users").doc(uuid).get()
+    if (!is_user_in_database.exists) {
+      //uuid = crypto.randomUUID()
+      await db.collection("users").doc(uuid).set({
+        access_token: "",
+        refresh_token: "",
+        expires_in: 0
+      })
+    }
+  }
+
   if (req.headers.host.startsWith("127.0.0.1")) {
       redirect_uri = "http://127.0.0.1:3000/api/callback"
   }
-  // if the user isnt new
   const params = new URLSearchParams({
     client_id,
     response_type: "code",
     redirect_uri,
-    scope: scopes
+    scope: scopes,
+    state: uuid
   })
 
-  res.redirect("https://accounts.spotify.com/authorize?" + params.toString())
+  res.json({
+    auth_url: "https://accounts.spotify.com/authorize?" + params.toString()
+  })
 }
