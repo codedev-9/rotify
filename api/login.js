@@ -24,6 +24,7 @@ export default async function handler(req, res) {
       await db.collection("users").doc(req.body.user_id).set({
         access_token: "",
         refresh_token: "",
+        code: "",
         expires_in: 0
       })
       return res.status(200).json({ success: true })
