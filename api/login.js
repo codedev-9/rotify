@@ -6,6 +6,7 @@ const scopes = [
   "user-read-private"
 ].join(" ")
 import admin from "firebase-admin";
+import { lessThan } from "firebase/firestore/pipelines";
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -17,21 +18,21 @@ if (!admin.apps.length) {
 }
 const db = admin.firestore();
 export default async function handler(req, res) {
+  let uuid = req.body.user_id
   if (req.method === "POST") {
     // If user is new -> add new datastore doc
     const user_id = req.body.user_id
     if (!req.body.user_id) {
       return res.status(400).json({ message: "missing user_id" })
     }
-    const is_user_in_database = await db.collection("users").doc(user_id).get()
+    const is_user_in_database = await db.collection("users").doc(uuid).get()
     if (!is_user_in_database.exists) {
-      await db.collection("users").doc(user_id).set({
+      //uuid = crypto.randomUUID()
+      await db.collection("users").doc(uuid).set({
         access_token: "",
         refresh_token: "",
-        code: "",
         expires_in: 0
       })
-      res.status(200).json({ success: true })
     }
   }
 
@@ -42,7 +43,8 @@ export default async function handler(req, res) {
     client_id,
     response_type: "code",
     redirect_uri,
-    scope: scopes
+    scope: scopes,
+    state: uuid
   })
 
   res.json({

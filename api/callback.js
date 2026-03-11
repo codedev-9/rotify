@@ -15,6 +15,7 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 export default async function handler(req, res) {
   const code = req.query.code
+  /*
   if (req.method === "POST") {
     // code check
   if (!code) {
@@ -47,6 +48,7 @@ export default async function handler(req, res) {
     expires_in: data.expires_in
   })
 }
+  */
 
 
   if (!code) {
@@ -72,9 +74,14 @@ export default async function handler(req, res) {
   })
 
   const data = await tokenResponse.json()
+  await db.collection("users").doc(req.query.state).update({
+    access_token: data.access_token,
+    refresh_token: data.refresh_token,
+    expires_in: data.expires_in
+  })
  res.setHeader("Content-Type", "text/plain");
- res.send(
-  `Access Token: ${data.access_token}\nRefresh Token: ${data.refresh_token}\nExpires in: ${data.expires_in}`
- );
+ res.json({
+  success: true,
+ })
 
 }
