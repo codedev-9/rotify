@@ -12,7 +12,6 @@ if (!admin.apps.length) {
 }
 const db = admin.firestore();
 export default async function handler(req, res) {
-  let uuid = req.body.user_id
   if (req.method === "GET") {
     if (!req.query.user_id) {
       return res.status(200).json({ message: "missing uuid" })
