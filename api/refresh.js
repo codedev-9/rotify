@@ -33,7 +33,9 @@ export default async function handler(req, res) {
     })
     const data = await tokenResponse.json()
     await db.collection("users").doc(uuid).update({
-      access_token: "BQAeBl6Og8MjF04UOVafkrS939Z6yNMNEAOt_1f_kekbkMY6d9YCZk7EfkKagR239nBchDDcRZS3ZfF6CA7TKFaYUa4QU3AOri3siFGrtl_0SzHr7AGEiRyY2dq6QVyczC9FF6r4m-MxGh64ksQ5drdlKg-aHYz3YDfGgZ8NrWvI_UUQ7lp8Vi895YmKUw8CBVsQKOAEKBZLc7C5JYSKBZ17_JE9sS_bbW8PZ9yMXyy-QNHkqtvpzO4mUnC2108SyVN3cSXO"
+      access_token: data.access_token,
+      expires_in: data.expires_in,
+      expires_at: Math.floor(new Date().getTime()/1000.0) + data.expires_in
     })
     res.status(200).json({ success: true })
   }

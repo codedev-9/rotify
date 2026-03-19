@@ -3,6 +3,7 @@ const client_secret = process.env.SPOTIFY_CLIENT_SECRET
 let redirect_uri = "https://rotify.xyz/api/callback"
 import admin from "firebase-admin";
 import { refreshToken } from "firebase-admin/app";
+import { unixMicrosToTimestamp } from "firebase/firestore/pipelines";
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -77,7 +78,8 @@ export default async function handler(req, res) {
   await db.collection("users").doc(req.query.state).update({
     access_token: data.access_token,
     refresh_token: data.refresh_token,
-    expires_in: data.expires_in
+    expires_in: data.expires_in,
+    expires_at: Math.floor(new Date().getTime()/1000.0) + data.expires_in
   })
  res.setHeader("Content-Type", "text/plain");
  res.json({

@@ -3,7 +3,6 @@ let redirect_uri = "https://rotify.xyz/api/callback"
 const scopes = [
   "user-read-playback-state",
   "user-read-currently-playing",
-  "user-read-private"
 ].join(" ")
 import admin from "firebase-admin";
 import { lessThan } from "firebase/firestore/pipelines";
@@ -31,7 +30,8 @@ export default async function handler(req, res) {
       await db.collection("users").doc(uuid).set({
         access_token: "",
         refresh_token: "",
-        expires_in: 0
+        expires_in: 0,
+        expires_at: 0
       })
     }
   }

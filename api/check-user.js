@@ -14,10 +14,10 @@ const db = admin.firestore();
 export default async function handler(req, res) {
   if (req.method === "GET") {
     if (!req.query.user_id) {
-      return res.status(200).json({ message: "missing uuid" })
+      return res.status(400).json({ message: "missing uuid" })
     }
     const uuid = req.query.user_id
     const bool = (await db.collection("users").doc(uuid).get()).exists
-    return res.json({ bool })
+    return res.statis(200).json({ user_exists : bool })
   }
 }
