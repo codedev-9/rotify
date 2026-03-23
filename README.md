@@ -1,10 +1,10 @@
-# rotify
-rotify is a spotify-to-roblox script that lets you see what songs are playing, and best of all, the setup is so much easier than other tools.
-this script works on executors that support http requests.
-# how it works
-You firstly execute this code
+# Rotify
+Rotify is a roblox script that allows you to see what playing on spotify in roblox.
+# How It Works
+Rotify works by using spotify's web apps, which securely gets your access token (or spotify token), this is only send to the database which allows the script to check if you have already authed.
+# Installation
+**Installing Rotify requires a executor that can support http requests.**
+Step 1 - Execute this code from your executor
 ```lua
-local test = 1
+print(1)
 ```
-# what executors are supported
-if it supports websockets u good
